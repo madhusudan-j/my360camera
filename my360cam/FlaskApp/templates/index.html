@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Streaming Video Recorder</title>
+</head>
+<body>
+  <h1>ip camera app</h1>
+  <form action="/camera_stream" method="post">
+    <input type="text" name="camera_ip" id="camera_ip" placeholder="Enter camera url">
+    <button type="submit">Add Camera</button>
+  </form>
+
+  <h1>Add user </h1>
+  <form action="/create_data" method="post">
+    <input type="text" name="user_id" id="user_id" placeholder="Enter user id">
+    <button type="submit">Add User</button>
+  </form>
+</body>
+</html>

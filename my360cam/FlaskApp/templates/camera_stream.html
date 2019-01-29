@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Streaming Video Recorder</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <h1>Streaming Video from camera</h1>
+    <div class="row">
+      <div class="col-sm-6">
+          <div id="recorder">
+              <!-- <button id="record">Record</button>
+              <button id="stop">Stop</button> -->
+              <a id="download"></a>
+              <script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>      
+          </div>
+            <img id="video" src="{{ url_for('video_viewer') }}">
+      </div>
+      <div class="col-sm-6" style="background-color:rgb(199, 222, 226);">
+          <h2>Registered data</h2>
+          {% for d in data%}
+          <p>{{ d }}</p>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+  
+</body>
+</html>
+
