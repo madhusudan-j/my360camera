@@ -1,7 +1,7 @@
 import cv2
 import threading
 
-opencvDatapath = "/home/comx-admin/my360camera/FlaskApp/opencvdata/haarcascades/"
+opencvDatapath = "/home/comx-admin/my360camera/my360cam/FlaskApp/opencvdata/haarcascades/"
 
 class RecordingThread (threading.Thread):
     def __init__(self, name, camera):
@@ -31,7 +31,12 @@ class VideoCamera(object):
     def __init__(self, camera_ip = 0):
         # Open a camera
         self.cap = cv2.VideoCapture(camera_ip)
-      
+       
+        # set frame width, set frame height, adjust the frame rate per second
+        # self.cap.set(3,640)
+        # self.cap.set(4,480)
+        # self.cap.set(cv2.CAP_PROP_FPS, 120) 
+
         # Initialize video recording environment
         self.is_record = False
         self.out = None
@@ -55,9 +60,16 @@ class VideoCamera(object):
         else:
             return None
 
-    def get_frame_detetedface(self):
+        ''' 
+        # returns frame without delay
+        success, image = self.video.read()
+        ret, jpeg = cv2.imencode('.jpg', image)
+        return jpeg.tobytes()
+        '''
+
+    def get_frame_deteted_face(self):
         detected_faces = set()
-        ret, frame = self.cap.read()
+        ret, frame = self.cap.read()    
         detector= cv2.CascadeClassifier(opencvDatapath + 'haarcascade_frontalface_default.xml')
         rec = cv2.face.LBPHFaceRecognizer_create()
         rec.read("recognizer/trainingdata.yml")
@@ -68,7 +80,7 @@ class VideoCamera(object):
         for (x,y,w,h) in faces:
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
             id, conf = rec.predict(gray[y:y+h, x:x+w])
-            if id == 1 or id == 11:
+            if id == 1 or id == 11 or id == 121:
                 id = "madhu"
                 detected_faces.add(id)
             elif id == 222:
@@ -77,9 +89,9 @@ class VideoCamera(object):
             elif id == 6:
                 id = "sagar"
                 detected_faces.add(id)
-            else:
-                id = "unknown"
-                detected_faces.add(id)
+            # else:
+            #     id = "unknown"
+            #     detected_faces.add(id)
             cv2.putText(frame,str(id), (x,y+h),font, 2, 255)
         if ret:
             ret, jpeg = cv2.imencode('.jpg', frame)
@@ -87,7 +99,7 @@ class VideoCamera(object):
         else:
             return None
 
-    def get_detetedfaces(self):
+    def get_name_deteted_face(self):
         detected_faces = set()
         ret, frame = self.cap.read()
         detector= cv2.CascadeClassifier(opencvDatapath + 'haarcascade_frontalface_default.xml')
@@ -100,18 +112,18 @@ class VideoCamera(object):
         for (x,y,w,h) in faces:
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
             id, conf = rec.predict(gray[y:y+h, x:x+w])
-            if id == 1:
+            if id == 1 or id == 11 or id == 121:
                 id = "madhu"
                 detected_faces.add(id)
             elif id == 5:
                 id = "gopal"
                 detected_faces.add(id)
             elif id == 6:
-                id = "sagar"
+                id = "madhu"
                 detected_faces.add(id)
-            else:
-                id = "unknown"
-                detected_faces.add(id)
+            # else:
+            #     id = "unknown"
+            #     detected_faces.add(id)
             cv2.putText(frame,str(id), (x,y+h),font, 2, 255)
             print(detected_faces)
         if ret:
@@ -153,3 +165,20 @@ class VideoCamera(object):
             else:
                 return None
 
+class NewVideoCamera(object):
+    def __init__(self):
+        # Using OpenCV to capture from device 0. If you have trouble capturing
+        # from a webcam, comment the line below out and use a video file
+        # instead.
+        self.video = cv2.VideoCapture('rtsp://admin:admin12345@192.168.0.199:554/Streaming/channels/2/')
+        # If you decide to use video.mp4, you must have this file in the folder
+        # as the main.py.
+        # self.video = cv2.VideoCapture('video.mp4')
+    
+    def __del__(self):
+        self.video.release()
+    
+    def get_frame(self):
+        success, image = self.video.read()
+        ret, jpeg = cv2.imencode('.jpg', image)
+        return jpeg.tobytes()

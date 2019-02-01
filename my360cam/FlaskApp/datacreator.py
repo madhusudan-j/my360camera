@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-opencvDatapath = "/home/comx-admin/my360camera/FlaskApp/opencvdata/haarcascades/"
+opencvDatapath = "/home/comx-admin/my360camera/my360cam/FlaskApp/opencvdata/haarcascades/"
 detector= cv2.CascadeClassifier( opencvDatapath + 'haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0)
 

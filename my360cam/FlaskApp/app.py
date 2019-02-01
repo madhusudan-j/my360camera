@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, Response, jsonify, request
 from camera import VideoCamera
 import cv2
@@ -19,7 +18,7 @@ def create_data():
 def data_creator_stream(request):
     user_id = request.form["user_id"]
     print(user_id, "*" * 20)
-    user_id = int(user_id)
+    # user_id = int(user_id)
     global video_camera 
     global global_frame
 
@@ -42,13 +41,13 @@ def data_creator_stream(request):
 @app.route('/camera_stream', methods=['POST'])
 def camera_stream():
     data = video_details(request = request)
-    print(type(data))
+    # print(type(data))
     return render_template('camera_stream.html', data = data)
 
 def video_details(request):
     camera_ip = request.form["camera_ip"]
-    camera_ip = int(camera_ip)
-    print(int(camera_ip), "#" * 20)
+    camera_ip = str(camera_ip)
+    print(str(camera_ip), "#" * 20)
     global video_camera 
     global global_frame
 
@@ -56,7 +55,7 @@ def video_details(request):
         video_camera = VideoCamera(camera_ip)
         
     while True:
-        frame = video_camera.get_detetedfaces()
+        frame = video_camera.get_name_deteted_face()
 
         if frame != None:
             global_frame = frame
@@ -98,7 +97,7 @@ def video_stream():
         video_camera = VideoCamera()
         
     while True:
-        frame = video_camera.get_frame_detetedface()
+        frame = video_camera.get_frame_deteted_face()
 
         if frame != None:
             global_frame = frame
@@ -108,6 +107,20 @@ def video_stream():
             yield (b'--frame\r\n'
                             b'Content-Type: image/jpeg\r\n\r\n' + global_frame + b'\r\n\r\n')
 
+##############################################
+from camera import NewVideoCamera
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(NewVideoCamera()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+###############################################
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded = True, debug = True)
